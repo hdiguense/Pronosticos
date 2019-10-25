@@ -1,0 +1,484 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="initial-scale=1,maximum-scale=1,user-scalable=no"
+    />
+    <!--
+  ArcGIS API for JavaScript, https://js.arcgis.com
+  For more information about the widgets-timeslider sample, read the original sample description at developers.arcgis.com.
+  https://developers.arcgis.com/javascript/latest/sample-code/widgets-timeslider/index.html
+  -->
+<title>Pronosticos de lluvia</title>
+
+    <link
+      rel="stylesheet"
+      href="https://js.arcgis.com/4.13/esri/themes/light/main.css"
+    />
+    <script src="https://js.arcgis.com/4.13/"></script>
+
+    <style>
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      #timeSlider {
+        position: absolute;
+        left: 1px;
+        right: 1px;
+        bottom: 20px;
+      }
+
+      #titleDiv {
+        padding: 10px;
+        font-weight: 36;
+        text-align: center;
+      }
+    </style>
+    <script>
+      require([
+        "esri/WebMap",
+        "esri/views/MapView",
+        "esri/layers/MapImageLayer",
+        "esri/widgets/TimeSlider",
+        "esri/widgets/Expand",
+        "esri/widgets/Legend",
+        "esri/widgets/Track",
+        "esri/layers/support/LabelClass"
+      ], function(Map, MapView, MapImageLayer, TimeSlider, Expand, Legend, Track, LabelClass) {
+
+        //style of classes
+
+        const f0t3 = {
+          type: "simple-fill",
+          color: "#ffffff",
+          style: "none",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f3t4 = {
+          type: "simple-fill",
+          color: "#4AFC4A",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f4t6 = {
+          type: "simple-fill",
+          color: "#4AED4A",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f6t8 = {
+          type: "simple-fill",
+          color: "#4ADE4A",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f8t10 = {
+          type: "simple-fill",
+          color: "#4AD04A",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f10t12 = {
+          type: "simple-fill",
+          color: "#4AE0FC",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f12t15 = {
+          type: "simple-fill",
+          color: "#4AE0FC",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f15t20 = {
+          type: "simple-fill",
+          color: "#4AC3FC",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f20t25 = {
+          type: "simple-fill",
+          color: "#4AB5FC",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f25t30 = {
+          type: "simple-fill",
+          color: "#BC7CFC",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f30t35 = {
+          type: "simple-fill",
+          color: "#BB70F4",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f35t40 = {
+          type: "simple-fill",
+          color: "#AE51F4",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f40t45 = {
+          type: "simple-fill",
+          color: "#BA58D7",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f45t50 = {
+          type: "simple-fill",
+          color: "#FDA0A0",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f50t60 = {
+          type: "simple-fill",
+          color: "#FDA0A0",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f60t70 = {
+          type: "simple-fill",
+          color: "#FD7575",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f70t80 = {
+          type: "simple-fill",
+          color: "#FD7575",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f80t90 = {
+          type: "simple-fill",
+          color: "#FEFE78",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f90t100 = {
+          type: "simple-fill",
+          color: "#FEF43B",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        const f100t120 = {
+          type: "simple-fill",
+          color: "#FEF43B",
+          style: "solid",
+          outline: {
+            width: 0
+          }
+        };
+
+        var renderer = {
+          type: "class-breaks",
+          field: "Contour",
+          legendOptions: {
+            title: "Milímetros de lluvia pronosticada (mm)"
+          },
+          classBreakInfos: [
+            {
+              minValue: 0,
+              maxValue: 2.9,
+              symbol: f0t3,
+              label: "0 a 2,9"
+            },
+            {
+              minValue: 3,
+              maxValue: 3.9,
+              symbol: f3t4,
+              label: "3 a 3,9"
+            },
+            {
+              minValue: 4,
+              maxValue: 5.9,
+              symbol: f4t6,
+              label: "4 a 5,9"
+            },
+            {
+              minValue: 6,
+              maxValue: 7.9,
+              symbol: f6t8,
+              label: "6 a 7,9"
+            },
+            {
+              minValue: 8,
+              maxValue: 9.9,
+              symbol: f8t10,
+              label: "8 a 9,9"
+            },
+            {
+              minValue: 10,
+              maxValue: 11.9,
+              symbol: f10t12,
+              label: "10 a 11,9"
+            },
+            {
+              minValue: 12,
+              maxValue: 14.9,
+              symbol: f12t15,
+              label: "12 a 14,9"
+            },
+            {
+              minValue: 15,
+              maxValue: 19.9,
+              symbol: f15t20,
+              label: "15 a 19,9"
+            },
+            {
+              minValue: 20,
+              maxValue: 24.9,
+              symbol: f20t25,
+              label: "20 a 24,9"
+            },
+            {
+              minValue: 25,
+              maxValue: 29.9,
+              symbol: f25t30,
+              label: "25 a 29,9"
+            },
+            {
+              minValue: 30,
+              maxValue: 34.9,
+              symbol: f30t35,
+              label: "30 a 34,9"
+            },
+            {
+              minValue: 35,
+              maxValue: 39.9,
+              symbol: f35t40,
+              label: "35 a 39,9"
+            },
+            {
+              minValue: 40,
+              maxValue: 44.9,
+              symbol: f40t45,
+              label: "40 a 44,9"
+            },
+            {
+              minValue: 45,
+              maxValue: 49.9,
+              symbol: f45t50,
+              label: "45 a 49,9"
+            },
+            {
+              minValue: 50,
+              maxValue: 59.9,
+              symbol: f50t60,
+              label: "50 a 59,9"
+            },
+            {
+              minValue: 60,
+              maxValue: 69.9,
+              symbol: f60t70,
+              label: "60 a 69,9"
+            },
+            {
+              minValue: 70,
+              maxValue: 79.9,
+              symbol: f70t80,
+              label: "70 a 79,9"
+            },
+            {
+              minValue: 80,
+              maxValue: 89.9,
+              symbol: f80t90,
+              label: "80 a 89,9"
+            },
+            {
+              minValue: 90,
+              maxValue: 99.9,
+              symbol: f90t100,
+              label: "90 a 99,9"
+            },
+            {
+              minValue: 100,
+              maxValue: 120,
+              symbol: f100t120,
+              label: "100 a 120"
+            },
+          ]
+        };
+
+
+        //popup content
+
+        var popup = {
+          expressionInfos: [{
+            name: "daily-rain",
+            title: '$feature.inicio',
+            expression: '"El "+ Lower(when(Weekday($feature.inicio)== 0, "Domingo",Weekday($feature.inicio)== 1, "Lunes", Weekday($feature.inicio)== 2, "Martes",Weekday($feature.inicio)== 3, "Miercoles",Weekday($feature.inicio)== 4, "Jueves",Weekday($feature.inicio)== 5, "Viernes","Sabado"))+ " se espera que llueva " + $feature.contour +"mm"'
+          }],
+          content: "{expression/daily-rain}"
+        };
+
+
+        const layer = new MapImageLayer({
+          url: "https://sig.icafe.cr/server/rest/services/pronosticos_image/MapServer",
+          sublayers: [
+            {
+              id: 0,
+              // popupTemplate: popup,
+              renderer: renderer,
+              opacity: 0.6,
+              labelingInfo: [
+                {
+                  labelExpression: '[Label]',
+                  labelPlacement: "always-horizontal",
+                  // symbol: {
+                  //   type: "text", // autocasts as new TextSymbol()
+                  //   color: [255, 255, 255, 1],
+                  //   haloColor: [0, 0, 0, 1],
+                  //   haloSize: 0.5,
+                  //   font: {
+                  //     size: 12
+                  //   }
+                  // },
+                  minScale: 3000000, //far
+                  maxScale: 1000, //close
+                  where: "Contour >= 3"
+                }
+              ]
+            }
+          ]
+        });
+
+        const map = new Map({
+          basemap: "hybrid",
+          layers: [layer]
+        });
+
+        const view = new MapView({
+          map: map,
+          container: "viewDiv",
+          zoom: 8,
+          center: [-84, 9.5]
+        });
+
+        // time slider widget initialization
+        const timeSlider = new TimeSlider({
+          container: "timeSlider",
+          mode: "instant",
+          view: view,
+          playRate: 30000
+        });
+        view.ui.add(timeSlider, "manual");
+
+        // add the UI for titles, stats and chart.
+        view.ui.add("titleDiv", "top-right");
+
+        view.whenLayerView(layer).then(function(lv) {
+          const fullTimeExtent = layer.timeInfo.fullTimeExtent;
+
+          // set up time slider properties
+          timeSlider.fullTimeExtent = fullTimeExtent;
+          timeSlider.stops = {
+            interval: {
+              value: 1,
+              unit: "days"
+            },
+            timeExtent: layer.timeInfo.timeExtent
+          };
+        });
+
+        const legend = new Legend({
+          view: view
+        });
+        const legendExpand = new Expand({
+          expandIconClass: "esri-icon-collection",
+          expandTooltip: "Legend",
+          view: view,
+          expanded: true,
+          content: legend,
+          expanded: false
+        });
+        view.ui.add(legendExpand, "top-left");
+
+        //track
+        var track = new Track({
+          view: view
+        });
+
+        view.ui.add(track, "top-left");
+
+        view.when(function() {
+          track.start();
+        });
+
+      });
+    </script>
+  </head>
+
+  <body>
+    <div id="viewDiv"></div>
+    <div id="timeSlider"></div>
+    <div id="titleDiv" class="esri-widget">
+      <div id="titleText">Pronósticos de lluvia</div>
+    </div>
+  </body>
+</html>
